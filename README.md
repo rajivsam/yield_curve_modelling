@@ -9,12 +9,20 @@ This code requires the var R package and the GPy, pandas python modules. The cod
 
 # To Run
 (1) Create a virtual environment `virtualenv ycurve_paper --python=python3.10`
+
 (2) `source ycurve_paper/bin/activate`
 (3) `git clone https://github.com/rajivsam/yield_curve_modelling.git`
+
 (4) `cd yield_curve_modelling`
+
 (5) `pip install -r requirements.txt`
+
 (6) `ipython`
+
 (7) `from dgp_ycm import *`
+
 (8) `seq_pred()`
+
 (9) The script will run and produce a `GP_Results.csv` file that contains the mean and SD for the GP model estimates for each term using the sequential process described in the paper.
  
+
