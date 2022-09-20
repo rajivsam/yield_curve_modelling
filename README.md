@@ -8,7 +8,7 @@ This code requires the var R package and the GPy, pandas python modules. The cod
 (5) dgp_ycm.py implementation of the dynamic gaussian process based on the GPy library. Run the seq_pred() method for 10 year prediction. The model parameters for the GP are constrained to be positive. The optimization code in GPy issues warnings when this condition is specified. Ignore these warnings.
 
 # To Run
-(1) Create a virtual environment `virtualenv ycurve_paper --python=python3.10` (see https://[virtualenv](pypi.org/project/virtualenv/))
+(1) Create a virtual environment `virtualenv ycurve_paper --python=python3.10` (see https://[virtualenv](https://pypi.org/project/virtualenv/))
 
 (2) `source ycurve_paper/bin/activate`
 (3) `git clone https://github.com/rajivsam/yield_curve_modelling.git`
