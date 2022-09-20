@@ -33,7 +33,7 @@ logger.addHandler(ch)
 logger.setLevel(logging.DEBUG)
 
 def read_data():
-    os.chdir('/home/admin123/Yield_Curve_Modelling/')
+    os.chdir( os.getcwd())
     fp = 'Src_2_2006_to_Present_Treasury_Data.csv'
     df = pd.read_csv(fp)
     ref_date = date(2012, 12, 31)
@@ -49,7 +49,7 @@ def do_random_gp_plot(k = 5):
     X = np.reshape(X, (X.shape[0], 1))
     logger.info(X)
     req_cols = filter(lambda v : v not in ["Date", "key"], df.columns)
-    Y = df.ix[k, req_cols]
+    Y = df.iloc[k, req_cols]
     Y = np.reshape(Y, (Y.shape[0],1))
     k = RBF(input_dim = 1)
     m = GPy.models.GPRegression(X, Y, k)
@@ -71,7 +71,7 @@ def db_block():
     index_start = 0
     block_size = 60
     index_end = index_start + block_size
-    df_block = df.ix[index_start: (index_end - 1),:]
+    df_block = df.iloc[index_start: (index_end - 1),:]
     m = train_batch_mf(df_block)
 
     plt.scatter(X, priord[1], color = 'red')
@@ -90,7 +90,10 @@ def seq_pred():
     X = [t/miy for t in mts]
     X = np.array(X)
     X = np.reshape(X, (X.shape[0], 1))
-    req_cols = filter(lambda v : v not in ["Date", "key"], df.columns)
+    #req_cols = filter(lambda v : v not in ["Date", "key"], df.columns.tolist())
+    req_cols = df.columns.tolist()
+    req_cols.remove("Date")
+    #req_cols.remove("key")
     N = df.shape[0]
     pred_rows = N - 2
     
@@ -105,8 +108,8 @@ def seq_pred():
     mf = Mapping(1,1)
     date_list = list()
     while row_index < (N-2): # (N-2) is because we don't need to process last record
-        dfr = df.ix[row_index,:]
-        Y = dfr[req_cols]
+        dfr = df.iloc[row_index,:]
+        Y = dfr[req_cols].values
         Y = np.reshape(Y, (Y.shape[0],1))
 
         #log progress - update progress every 100 days
@@ -121,7 +124,7 @@ def seq_pred():
         else:
             ## The following block corresponds to the update
             ## of Kalman filter
-            act = df.ix[(row_index), req_cols]
+            act = df.loc[(row_index), req_cols].values
             act = np.reshape(act,\
                                       (act.shape[0],1))
             # post_pred is the prediction for the previous day
@@ -157,7 +160,7 @@ def seq_pred():
         # the index for dates
         estimates = post_pred.ravel()
         pred_mat[(row_index - 1), :] = post_pred.ravel()
-        act = df.ix[row_index, req_cols]
+        act = df.loc[row_index, req_cols].values
         error_mat[(row_index - 1), :] = (act - estimates)*(act - estimates)
         
 
@@ -174,7 +177,7 @@ def seq_pred():
     # compute the rmse for each term
     N_preds = N - 2
     for c in range(error_df.shape[1]):
-        se = error_df.ix[:, c] 
+        se = error_df.iloc[:, c] 
         rmse_mat[0, c] = sqrt(np.sum(se)/N_preds)
 
     rmse_df = pd.DataFrame(rmse_mat)
@@ -182,7 +185,7 @@ def seq_pred():
 
 
 
-    os.chdir('/home/admin123/Yield_Curve_Modelling/')
+    os.chdir( os.getcwd())
     fp = "GP_Results.csv"
     perf_df.to_csv(fp, index = False, header = True)
     fp = "rmse_results_DGP"+ ".csv"
@@ -226,6 +229,8 @@ def seq_pred():
     logger.info("Done!")   
     return  
 
+if __name__ == "__main__" :
+    seq_pred()
 
 
 
